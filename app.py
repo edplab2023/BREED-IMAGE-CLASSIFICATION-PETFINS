@@ -39,12 +39,11 @@ def list_classes():
 
 @app.post('/inference')
 async def classification(file: UploadFile = File(...)) -> Dict[str, str]:
-    # filename = secure_filename(file.filename)
     contents = await file.read()
     image = Image.open(io.BytesIO(contents)).convert("RGB")
     
     
-    top_5_predictions = ML_MODELS['classification'](img = image)
+    top_5_predictions = ML_MODELS['classification'].predict(image = image)
 
     return top_5_predictions
 

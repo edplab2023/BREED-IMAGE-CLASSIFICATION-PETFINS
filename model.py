@@ -27,10 +27,7 @@ class Classifier:
         use_gpu = str(next(self.model.parameters()).is_cuda)
         logging.info(f'Model Ready using gpu: {use_gpu}')
 
-    
-    def predict(self, x):
-        return self.model.predict(x)
-    
+
     def preprocess(self, imgfname):
         return PILImage.create(imgfname)
     
@@ -48,8 +45,8 @@ class Classifier:
         
         return {class_dict[idx] : str(round(prob * 100, 2))+'%' for idx, prob in zip(top_5_index, top_5_probabilities)}
     
-    def __call__(self, img):
-        pred_class, pred_idx, probs = self.predict(img)
+    def predict(self, image):
+        pred_class, pred_idx, probs = self.model.predict(image)
         
         top_5_predictions = self.postprocess(probs)
         
