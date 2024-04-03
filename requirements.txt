@@ -1,0 +1,9 @@
+fastai
+fastapi
+uvicorn
+pydantic
+werkzeug
+flask
+uwsgi
+python-multipart
+matplotlib
