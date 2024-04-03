@@ -2,6 +2,10 @@ from fastai.vision.all import *
 import numpy as np
 import os
 import torch
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -17,10 +21,12 @@ class_dict = {idx: clsname for idx, clsname in enumerate(classes)}
 class Classifier:
     
     def __init__(self, model_path):
-    
+        logging.info('Loading Model...')
         self.model = load_learner(model_path)
         self.model.to(device)
-        print('model using gpu: ', next(self.model.parameters()).is_cuda)
+        use_gpu = str(next(self.model.parameters()).is_cuda)
+        logging.info(f'Model Ready using gpu: {use_gpu}')
+
     
     def predict(self, x):
         return self.model.predict(x)
@@ -40,10 +46,9 @@ class Classifier:
         top_5_probabilities = [prob / sum_probabilities for prob in top_5_probabilities]
         
         
-        return {class_dict[idx] : prob for idx, prob in zip(top_5_index, top_5_probabilities)}
+        return {class_dict[idx] : str(round(prob * 100, 2))+'%' for idx, prob in zip(top_5_index, top_5_probabilities)}
     
     def __call__(self, img):
-        # img = self.preprocess(image_path)
         pred_class, pred_idx, probs = self.predict(img)
         
         top_5_predictions = self.postprocess(probs)
